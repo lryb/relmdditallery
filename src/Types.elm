@@ -4,7 +4,7 @@ import Html as H exposing (Html)
 
 
 type Msg
-    = Void
+    = Next
 
 
 type alias Flags =
@@ -12,8 +12,10 @@ type alias Flags =
 
 
 type alias Model =
-    { urls : List String
+    { reddit : String
+    , urls : List String
     , matches : List ( String, WebsiteHelper )
+    , nextId : Int
     }
 
 

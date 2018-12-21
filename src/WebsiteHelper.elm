@@ -3,6 +3,7 @@ module WebsiteHelper exposing (filterByMatch, render)
 import Html as H exposing (Html)
 import Html.Attributes as HA
 import Html.Events as HE
+import Json.Decode as D
 import Types exposing (..)
 
 
@@ -48,10 +49,13 @@ render wh url =
 renderGfycat : String -> Html Msg
 renderGfycat url =
     let
-        transform : String -> String
-        transform =
-            identity
+        handler =
+            HE.on "ended" (D.succeed Next)
 
-        -- TODO: <source src="https://giant.gfycat.com/LimpingFlamboyantHorsechestnutleafminer.mp4" type="video/mp4">
+        identifier =
+            (String.split "/" >> List.reverse >> List.head >> Maybe.withDefault "") url
+
+        source =
+            "https://giant.gfycat.com/" ++ identifier ++ ".mp4"
     in
-    H.div [] [ H.a [ HA.href url ] [ H.text (transform url) ] ]
+    H.video [ HA.id "gfycat", HA.class "fullscreen-video", HA.autoplay True, HA.preload "auto", handler, HE.onClick Next ] [ H.source [ HA.src source ] [] ]
