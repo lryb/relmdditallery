@@ -1,4 +1,4 @@
-module Main exposing (Model, Msg(..), init, main, update, view)
+module Main exposing (init, main, update, view)
 
 import Browser
 import Browser.Navigation as Nav
@@ -6,7 +6,9 @@ import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Http exposing (Error(..))
-import Json.Decode as Decode
+import Json.Decode as D
+import Types exposing (..)
+import WebsiteHelper as WH
 
 
 
@@ -15,27 +17,24 @@ import Json.Decode as Decode
 -- ---------------------------
 
 
-type alias Flags =
-    ()
-
-
-type alias Model =
-    ()
+initGfycatUrls =
+    -- source: reddit.com/r/gifs
+    [ "https://gfycat.com/babyishbackfishingcat"
+    , "https://gfycat.com/LimpingFlamboyantHorsechestnutleafminer"
+    , "https://gfycat.com/ShinyChillyGrasshopper"
+    , "https://gfycat.com/ColdFlickeringAmphibian"
+    ]
 
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
-    ( (), Cmd.none )
+    ( Model initGfycatUrls (WH.filterByMatch initGfycatUrls), Cmd.none )
 
 
 
 -- ---------------------------
 -- UPDATE
 -- ---------------------------
-
-
-type Msg
-    = Void
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -53,7 +52,9 @@ update message model =
 
 view : Model -> Html Msg
 view model =
-    div [] [ text "Hello World!" ]
+    div
+        []
+        (List.map (\( url, wh ) -> WH.render wh url) model.matches)
 
 
 
