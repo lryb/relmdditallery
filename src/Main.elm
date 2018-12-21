@@ -25,25 +25,27 @@ port load : String -> Cmd msg
 -- ---------------------------
 -- MODEL
 -- ---------------------------
-
-
-initGfycatUrls =
-    -- source: reddit.com/r/gifs
-    [ "https://gfycat.com/babyishbackfishingcat"
-    , "https://gfycat.com/LimpingFlamboyantHorsechestnutleafminer"
-    , "https://gfycat.com/ShinyChillyGrasshopper"
-    , "https://gfycat.com/ColdFlickeringAmphibian"
-    ]
+{- }
+   initGfycatUrls =
+       -- source: reddit.com/r/gifs
+       [ "https://gfycat.com/babyishbackfishingcat"
+       , "https://gfycat.com/LimpingFlamboyantHorsechestnutleafminer"
+       , "https://gfycat.com/ShinyChillyGrasshopper"
+       , "https://gfycat.com/ColdFlickeringAmphibian"
+       ]
+-}
 
 
 init : Flags -> ( Model, Cmd Msg )
 init _ =
     ( { reddit = "/r/gifs"
-      , urls = initGfycatUrls
-      , matches = WH.filterByMatch initGfycatUrls
+      , matches = [] --WH.filterByMatch initGfycatUrls
       , nextId = 0
       }
-    , Cmd.none
+    , Http.get
+        { url = "https://api.reddit.com" ++ "/r/gifs"
+        , expect = Http.expectString Loaded
+        }
     )
 
 
@@ -69,6 +71,9 @@ update message model =
             ( { model | matches = newMatches }
             , load ""
             )
+
+        Loaded result ->
+            ( model, Cmd.none )
 
 
 
